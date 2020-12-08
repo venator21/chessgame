@@ -19,15 +19,12 @@ namespace Chess
 
     public abstract class APiece
     {
-        // protected APiece(PieceType pieceType, Color color)
-        // {
-        //     PieceType = pieceType;
-        //     Color = color;
-        // }
-
         public PieceType PieceType { get; protected set; }
         public Color Color { get; protected set; }
-        
+
+         public abstract bool CanMove(Position source, Position destination);
+
+
     }
 
     public class King : APiece
@@ -36,6 +33,19 @@ namespace Chess
         {
             PieceType = PieceType.King;
             Color = color;
+        }
+
+        public override bool CanMove(Position source, Position destination)
+        {
+            var x = Math.Abs(source.X - destination.X);
+            var y = Math.Abs(source.Y - destination.Y);
+            if (x > 1)
+                return false;
+
+            if (y > 1)
+                return false;
+
+            return x + y <= 2;
         }
     }
 
@@ -46,6 +56,12 @@ namespace Chess
             PieceType = PieceType.Queen;
             Color = color;
         }
+        public override bool CanMove(Position source, Position destination)
+        {
+            var x = Math.Abs(source.X - destination.X);
+            var y = Math.Abs(source.Y - destination.Y);
+            return (x == 0 || y == 0) || (x == y);
+        }
     }
 
     public class Bishop : APiece
@@ -54,6 +70,12 @@ namespace Chess
         {
             PieceType = PieceType.Bishop;
             Color = color;
+        }
+        public override bool CanMove(Position source, Position destination)
+        {
+            var x = Math.Abs(source.X - destination.X);
+            var y = Math.Abs(source.Y - destination.Y);
+            return x == y;
         }
     }
 
@@ -64,6 +86,12 @@ namespace Chess
             PieceType = PieceType.Knight;
             Color = color;
         }
+        public override bool CanMove(Position source, Position destination)
+        {
+            var x = Math.Abs(source.X - destination.X);
+            var y = Math.Abs(source.Y - destination.Y);
+            return (x == 1 && y == 2) || (x == 2 && y == 1);
+        }
     }
 
     public class Rook : APiece
@@ -73,6 +101,12 @@ namespace Chess
             PieceType = PieceType.Rook;
             Color = color;
         }
+        public override bool CanMove(Position source, Position destination)
+        {
+            var x = Math.Abs(source.X - destination.X);
+            var y = Math.Abs(source.Y - destination.Y);
+            return x == 0 || y == 0;
+        }
     }
 
     public class Pawn : APiece
@@ -81,6 +115,28 @@ namespace Chess
         {
             PieceType = PieceType.Pawn;
             Color = color;
+        }
+        public override bool CanMove(Position source, Position destination)
+        {
+            int x;
+            int y;
+
+            if (this.Color == Color.White) {
+                x = destination.X - source.X;
+                y = destination.Y - source.Y;
+            } else {
+                x = source.X - destination.X;
+                y = destination.Y - source.Y;
+            }
+
+            if (y == 1)
+            { 
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 

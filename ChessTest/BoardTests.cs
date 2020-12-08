@@ -25,7 +25,7 @@ namespace ChessTest
         public void BoardIsInitializedWithAllPieces(int x, int y)
         {
             Board newBoard = new Board();
-            var fieldContent = newBoard.GetField(new Position(x,y));
+            var fieldContent = newBoard.GetPiece(new Position(x,y));
             Assert.NotNull(fieldContent);
         }
         
@@ -41,7 +41,7 @@ namespace ChessTest
         public void BoardInitializesWithEmptyFieldsElsewhere(int x, int y)
         {
             Board newBoard = new Board();
-            var fieldContent = newBoard.GetField(new Position(x,y));
+            var fieldContent = newBoard.GetPiece(new Position(x,y));
             Assert.Null(fieldContent);
         }
 
@@ -54,12 +54,12 @@ namespace ChessTest
             var source = new Position(sourceX, sourceY);
             var destination = new Position(destinationX, destinationY);
             
-            var sourcePiece = newBoard.GetField(source);
+            var sourcePiece = newBoard.GetPiece(source);
             var moveResult = newBoard.MovePiece(source, destination);
-            var destinationPiece = newBoard.GetField(destination);
+            var destinationPiece = newBoard.GetPiece(destination);
 
             Assert.True(moveResult);
-            Assert.Null(newBoard.GetField(source));
+            Assert.Null(newBoard.GetPiece(source));
             Assert.Same(sourcePiece, destinationPiece);
             
         }

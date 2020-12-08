@@ -54,13 +54,18 @@ namespace Chess
             }
         }
 
-        public ref APiece GetField(Position position)
+        public ref APiece GetPiece(Position position)
         {
             return ref grid[position.X, position.Y];
         }
 
         public bool MovePiece(Position source, Position destination)
         {
+            if (!CanMovePieceWise(source, destination))
+            {
+                return false;
+            }
+
             var sourcePiece = grid[source.X, source.Y];
             grid[destination.X, destination.Y] = grid[source.X, source.Y];
             grid[source.X, source.Y] = null;
@@ -70,6 +75,13 @@ namespace Chess
             return isSuccessful;
         }
 
+        private bool CanMovePieceWise(Position source, Position destination)
+        {
+            var sourcePieceRef = GetPiece(source);
+            var canMove = sourcePieceRef.CanMove(source, destination);
+            return canMove;
+        }
+        
         public void DrawBoard()
         {
             Console.BackgroundColor = ConsoleColor.DarkBlue;
@@ -80,7 +92,7 @@ namespace Chess
                 Console.Write(" " + fieldNumber + "|");
                 for (var j = 0; j < 8; j++)
                 {
-                    var p = GetField(new Position(j, i));
+                    var p = GetPiece(new Position(j, i));
                     if (p == null) {
                         Console.ForegroundColor = ConsoleColor.DarkGray;
                         Console.Write(" " + "." + " ");

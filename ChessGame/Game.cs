@@ -37,8 +37,16 @@ namespace Chess
         {
             Console.Clear();
             board.DrawBoard();
-            var input = getMoveInput();
-            board.MovePiece(input.Item1, input.Item2);
+            bool wasMoved = false;
+            while (!wasMoved)
+            {
+                var (source, destination) = GetInputWithCheck();
+                wasMoved = board.MovePiece(source, destination);
+                if (!wasMoved)
+                {
+                    Console.Write("This piece can't move like that! ");
+                }
+            }
             PlayerChange();
         }
 
@@ -56,21 +64,53 @@ namespace Chess
 
         public Tuple<Position, Position> getMoveInput()
         {
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.Write("Please enter your move: ");
-            var moveInput = Console.ReadLine();
-            var sourceX = charTransformation(moveInput[0]) - 1;
-            var sourceY = moveInput[1] - 48 - 1;
-            
-            var destinationX = charTransformation(moveInput[3]) - 1;
-            var destinationY = moveInput[4] - 48 - 1;
-            
-            var source = new Position(sourceX, sourceY);
-            var destination = new Position(destinationX, destinationY);
+            try
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.Write("Please enter your move: ");
+                var moveInput = Console.ReadLine();
+                var sourceX = charTransformation(moveInput[0]) - 1;
+                var sourceY = moveInput[1] - 48 - 1;
 
-            return new Tuple<Position, Position>(source, destination);
+                var destinationX = charTransformation(moveInput[3]) - 1;
+                var destinationY = moveInput[4] - 48 - 1;
+
+                var source = new Position(sourceX, sourceY);
+                var destination = new Position(destinationX, destinationY);
+                return new Tuple<Position, Position>(source, destination);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Wrong format, please use format like this [A2-A3]");
+                return getMoveInput();
+            }
         }
 
+        public Tuple<Position, Position> GetInputWithCheck()
+        {
+            do
+            {
+                var input = getMoveInput();
+                if (board.GetPiece(input.Item1) != null)
+                {
+                    if (board.GetPiece(input.Item1).Color == CurrentPlayer.Color)
+                    {
+                        if (board.GetPiece(input.Item2) == null)
+                        {
+                            return input;
+                        }
+                        if (board.GetPiece(input.Item1).Color != board.GetPiece(input.Item2).Color)
+                        {
+                            return input;
+                        }
+                        Console.Write("You can't kill your piece! ");
+                        continue;
+                    }
+                }
+                Console.Write("It's not your piece! ");
+                
+            } while (true);
+        }
         private int charTransformation(char c)
         {
             switch (c) {
